@@ -62,31 +62,48 @@ module base() {
     }
 }
 
+module rand_hex(r) {
+    difference() {
+        cylinder(10, r=2*r/sqrt(3), $fn=6);
+        rotate([0,0,rands(0,360,1)[0]]) translate([0,0,6]) rotate([5,0,0]) cube([20,20,10], true);
+    }
+}
+
 module lid() {
     height = cherry_height+top+6.6;
     
-    hull() for (n = [1:6]) rotate([0, 0, (n+0)*360/6])
-        translate([radius-wall/2, 0, 0]) cylinder(top, r=wall/2);
-    
     // corners
     difference() {
+        union() {
+            hull() for (n = [1:6]) rotate([0, 0, (n+0)*360/6])
+                translate([radius-wall/2, 0, 0]) cylinder(top, r=wall/2);
+            hull() for (n = [1:6]) rotate([0, 0, (n+0)*360/6])
+                translate([radius-3*wall/2-tol, 0, 0]) cylinder(height, r=wall/2);
+        }
         hull() for (n = [1:6]) rotate([0, 0, (n+0)*360/6])
-            translate([radius-3*wall/2-tol, 0, 0]) cylinder(height, r=wall/2);
-        hull() for (n = [1:6]) rotate([0, 0, (n+0)*360/6])
-            translate([radius-5*wall/2-tol, 0, top]) cylinder(height, r=wall/2);
+            translate([radius-7*wall/2-tol, 0, 0]) cylinder(height, r=wall/2);
         for (n = [1:6]) rotate([0, 0, n*360/6])
-        translate([0, sqrt(3)*(radius-3*wall/2-tol)/2, height/2+top])
-            cube([3*radius/4, 2*wall, height], true);
+        translate([0, sqrt(3)*(radius-3*wall/2-tol)/2, height/2+top+5])
+            cube([3*radius/4, 3*wall, height], true);
     }
     
-    // cherry stem mount
-    translate([0, 0, top]) difference() {
-        cylinder(cherry_stem_height, r=5.5/2);
-        translate([0, 0, cherry_stem_height/2])
-            cube([cherry_stem_width+tol, cherry_stem_wall+tol, cherry_stem_height], true);
-        translate([0, 0, cherry_stem_height/2])
-            cube([cherry_stem_wall+tol, cherry_stem_width+tol, cherry_stem_height], true);
+    
+    intersection() {
+        difference() {
+            hull() for (n = [1:6]) rotate([0, 0, (n+0)*360/6])
+                translate([radius-7*wall/2-tol, 0, 0]) cylinder(height, r=wall/2);
+            hull() for (n = [1:6]) rotate([0, 0, (n+0)*360/6])
+                translate([cherry_width, 0, 0]) cylinder(height, r=wall/2);
+        }
+        for (i = [-10:10]) {
+            for (j = [-10:10]) {
+                translate([10*sqrt(3)*i/2, 10*j + 5*(i%2), 0]) rand_hex(5);
+            }
+        }
     }
+    
+    hull() for (n = [1:6]) rotate([0, 0, (n+0)*360/6])
+        translate([cherry_width, 0, 0]) cylinder(top, r=wall/2);
 }
 
 module pad() {
@@ -124,7 +141,34 @@ module plug() {
     }
 }
 
-base();
-//lid();
+//base();
+lid();
 //pad();
 //plug();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
